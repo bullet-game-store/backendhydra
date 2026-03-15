@@ -22,6 +22,7 @@ const PAYMENT_CONFIG = {
   bankBin: '970422',
   accountNo: '0794527008',
   accountName: 'TRAN NGUYEN CHUONG',
+  template: 'compact2',
   memoFormat: 'HYDRA + tên game viết tắt + mã đơn'
 };
 
@@ -91,6 +92,14 @@ function sendJson(res, statusCode, payload) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Api-Key'
   });
   res.end(JSON.stringify(payload));
+}
+
+function paymentConfigPayload() {
+  return {
+    ...PAYMENT_CONFIG,
+    dynamicQr: true,
+    mailEnabled: mailReady()
+  };
 }
 
 function readJsonBody(req) {
@@ -466,11 +475,21 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 204, {});
   }
 
+  if (req.method === 'GET' && url.pathname === '/') {
+    return sendJson(res, 200, {
+      ok: true,
+      service: 'Hydra Store backend',
+      health: '/api/health',
+      paymentConfig: '/api/payment/config',
+      webhook: '/api/sepay-webhook'
+    });
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/health') {
     return sendJson(res, 200, {
       ok: true,
       port: PORT,
-      paymentConfig: PAYMENT_CONFIG,
+      paymentConfig: paymentConfigPayload(),
       mail: {
         enabled: mailReady(),
         configuredUser: MAIL_CONFIG.user ? maskEmail(MAIL_CONFIG.user) : '',
@@ -481,18 +500,38 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  if (req.method === 'GET' && url.pathname === '/api/payment/config') {
-    return sendJson(res, 200, {
-      ...PAYMENT_CONFIG,
-      mailEnabled: mailReady()
-    });
+  if (req.method === 'GET' && ['/api/payment/config', '/api/payment-config', '/api/payments/config'].includes(url.pathname)) {
+    return sendJson(res, 200, paymentConfigPayload());
   }
 
   if (req.method === 'GET' && url.pathname === '/api/orders') {
     return sendJson(res, 200, ensureStoreShape(loadStore()));
   }
 
-  if (req.method === 'POST' && url.pathname === '/api/payments/check') {
+  if (req.method === 'POST' && ['/api/orders/register', '/api/orders'].includes(url.pathname)) {
+    try {
+      const payload = await readJsonBody(req);
+      if (!payload.code) {
+        return sendJson(res, 400, { error: 'MISSING_ORDER_CODE' });
+      }
+
+      const order = upsertOrder({
+        ...payload,
+        status: payload.status || 'pending'
+      });
+
+      return sendJson(res, 200, {
+        ok: true,
+        status: order.status,
+        paymentConfig: paymentConfigPayload(),
+        order
+      });
+    } catch (error) {
+      return sendJson(res, 400, { error: error.message || 'BAD_REQUEST' });
+    }
+  }
+
+  if (req.method === 'POST' && ['/api/payments/check', '/api/orders/check'].includes(url.pathname)) {
     try {
       const payload = await readJsonBody(req);
       if (!payload.code) {
@@ -531,7 +570,7 @@ const server = http.createServer(async (req, res) => {
         emailSent: Boolean(matched?.emailSentAt),
         deliveredTo: matched?.buyerEmail || '',
         emailStatus: matched?.emailDeliveryStatus || (matched?.emailSentAt ? 'sent' : ''),
-        paymentConfig: PAYMENT_CONFIG,
+        paymentConfig: paymentConfigPayload(),
         order: matched || null
       });
     } catch (error) {
