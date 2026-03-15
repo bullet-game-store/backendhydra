@@ -1,3 +1,56 @@
 {
-  "orders": []
+  "orders": [
+    {
+      "code": "HDL94DW1",
+      "memo": "HYDRA + RER + HDL94DW1",
+      "total": 99000,
+      "totalText": "99.000đ",
+      "buyerEmail": "patrickbateman0610vvv@gmail.com",
+      "name": "chuong",
+      "phone": "",
+      "note": "",
+      "status": "pending",
+      "items": [
+        {
+          "id": 1,
+          "title": "Resident Evil Requiem Deluxe Edition",
+          "qty": 1
+        }
+      ],
+      "createdAt": "2026-03-15T02:49:35.126Z",
+      "paidAt": "",
+      "deliveredAt": "",
+      "account": "",
+      "password": "",
+      "deliveredNote": ""
+    },
+    {
+      "code": "HDTEST01",
+      "memo": "HYDRA + REQ",
+      "total": 99000,
+      "totalText": "",
+      "name": "",
+      "phone": "",
+      "buyerEmail": "storehydra944@gmail.com",
+      "note": "",
+      "items": [
+        {
+          "title": "Resident Evil Requiem Deluxe Edition",
+          "qty": 1
+        }
+      ],
+      "status": "delivered",
+      "account": "tai_khoan_game",
+      "password": "mat_khau_game",
+      "deliveredNote": "Dang nhap Steam roi chuyen offline",
+      "paidAt": "2026-03-14T16:03:41.033Z",
+      "deliveredAt": "2026-03-14T16:03:41.034Z",
+      "emailSentAt": "2026-03-14T16:03:43.988Z",
+      "emailMessageId": "<60720b7c-9390-d676-8f63-11748fea5c92@gmail.com>",
+      "emailError": "",
+      "emailDeliveryStatus": "sent",
+      "createdAt": "2026-03-14T16:03:41.035Z",
+      "updatedAt": "2026-03-14T16:03:43.988Z"
+    }
+  ]
 }
