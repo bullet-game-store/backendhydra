@@ -168,5 +168,15 @@
     "orderCode": "",
     "reservedAt": null,
     "deliveredAt": null
+  },
+  {
+    "gameTitle": "Resident Evil 4 Remake Full DLC",
+    "account": "pouxeo",
+    "password": "@B9ZMAP!NEK6",
+    "note": "",
+    "status": "available",
+    "orderCode": "",
+    "reservedAt": null,
+    "deliveredAt": null
   }
 ]
